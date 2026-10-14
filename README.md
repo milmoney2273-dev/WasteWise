@@ -1,8 +1,11 @@
 
 # WasteWise 🌱
+
 ### Smarter kitchens. Less waste. Greater impact.
 
-WasteWise is a food-waste tracking and analysis web application designed to help restaurants monitor meal waste, understand trends, and set waste-reduction goals.
+[🌐 Live WasteWise Website](https://sonith.pythonanywhere.com/)
+
+WasteWise is a food-waste tracking and analysis platform designed to help restaurants monitor waste, understand trends, and set waste-reduction goals.
 
 ## Features
 
