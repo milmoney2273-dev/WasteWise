@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise | Restaurant Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f8f4;
+            color: #20382d;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .site-header {
+            background: #104d38;
+            color: white;
+            padding: 30px 5%;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .logo {
+            font-size: 2.7rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .logo span {
+            color: #71dba1;
+        }
+
+        .tagline {
+            margin: 12px 0 0;
+            font-size: 1.1rem;
+            color: #e1f5e8;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e0eae2;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px 5%;
+        }
+
+        .nav-links a {
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #365a47;
+            font-weight: 600;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            background: #e5f4e8;
+            color: #105a3d;
+        }
+
+        .dashboard {
+            max-width: 1600px;
+            margin: auto;
+            padding: 45px 5%;
+        }
+
+        .welcome {
+            position: relative;
+            overflow: hidden;
+            padding: 48px;
+            margin-bottom: 35px;
+            border: 1px solid #d7eadb;
+            border-radius: 28px;
+            background: linear-gradient(120deg, #e4f5e8, #fbfdfb);
+        }
+
+        .welcome h1 {
+            margin: 0 0 18px;
+            font-size: clamp(2rem, 4vw, 3.3rem);
+            letter-spacing: -1px;
+        }
+
+        .welcome p {
+            max-width: 760px;
+            margin: 0;
+            color: #61766a;
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .metric {
+            min-width: 0;
+            padding: 30px;
+            border: 1px solid #e0eae2;
+            border-radius: 23px;
+            background: white;
+            box-shadow: 0 5px 20px rgba(20, 70, 45, 0.035);
+        }
+
+        .metric-label {
+            color: #718077;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            margin-top: 24px;
+            color: #124d37;
+            font-size: clamp(2rem, 3vw, 2.8rem);
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .section-card {
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid #e0eae2;
+            border-radius: 22px;
+            background: white;
+        }
+
+        .section-card h2 {
+            margin-top: 0;
+            color: #20382d;
+        }
+
+        .section-card p {
+            line-height: 1.7;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .action-link {
+            display: inline-block;
+            padding: 14px 20px;
+            border-radius: 11px;
+            background: #145a40;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .action-link:hover {
+            background: #0c422e;
+        }
+
+        .action-link.secondary {
+            background: #e8f4eb;
+            color: #145a40;
+        }
+
+        .status {
+            margin-top: 18px;
+            color: #61766a;
+            font-size: 0.95rem;
+        }
+
+        .status.error {
+            color: #b42318;
+        }
+
+        .note {
+            color: #718077;
+            font-size: 0.92rem;
+        }
+
+        footer {
+            padding: 25px 5%;
+            color: #718077;
+            text-align: center;
+        }
+
+        @media (max-width: 1050px) {
+            .metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .site-header {
+                padding: 25px 5%;
+            }
+
+            .logo {
+                font-size: 2.2rem;
+            }
+
+            .nav-links {
+                gap: 4px;
+            }
+
+            .nav-links a {
+                padding: 11px 12px;
+                font-size: 0.9rem;
+            }
+
+            .dashboard {
+                padding: 25px 5%;
+            }
+
+            .welcome {
+                padding: 28px;
+                border-radius: 20px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .metric,
+            .section-card {
+                padding: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">WasteWise<span>.</span></div>
+            <p class="tagline">
+                Smarter kitchens. Less waste. Greater impact.
+            </p>
+        </div>
+    </header>
+
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="container nav-links">
+            <a href="/" class="active">Dashboard</a>
+            <a href="/entry.html">Daily Entry</a>
+            <a href="/calendar.html">Calendar</a>
+            <a href="/monthly.html">Monthly Analysis</a>
+            <a href="/yearly.html">Yearly Analysis</a>
+        </div>
+    </nav>
+
+    <main class="dashboard">
+        <section class="welcome">
+            <h1>Restaurant Dashboard</h1>
+            <p>
+                Track your restaurant's food waste and discover
+                opportunities to reduce it. Your statistics are
+                calculated from your saved daily entries.
+            </p>
+        </section>
+
+        <section class="metrics" aria-label="Restaurant statistics">
+            <article class="metric">
+                <div class="metric-label">Meals Wasted</div>
+                <div class="metric-value" id="totalWasted">—</div>
+            </article>
+
+            <article class="metric">
+                <div class="metric-label">Potential People Fed</div>
+                <div class="metric-value" id="totalPeople">—</div>
+            </article>
+
+            <article class="metric">
+                <div class="metric-label">Meals Prepared</div>
+                <div class="metric-value" id="totalPrepared">—</div>
+            </article>
+
+            <article class="metric">
+                <div class="metric-label">Meals Sold</div>
+                <div class="metric-value" id="totalSold">—</div>
+            </article>
+        </section>
+
+        <section class="section-card">
+            <h2>Manage your restaurant</h2>
+            <p>
+                Add your daily meal figures to update your food-waste
+                statistics and build a useful operating history.
+            </p>
+
+            <div class="actions">
+                <a class="action-link" href="/entry.html">
+                    + Add Daily Entry
+                </a>
+
+                <a class="action-link secondary" href="/api/entries">
+                    View Saved Data
+                </a>
+            </div>
+
+            <p id="dashboardStatus" class="status" role="status" aria-live="polite">
+                Loading saved data...
+            </p>
+        </section>
+
+        <section class="section-card">
+            <h2>Understanding your impact</h2>
+
+            <p>
+                <strong>Meals wasted</strong> = Meals prepared − Meals sold
+            </p>
+
+            <p>
+                <strong>Potential people fed</strong> = Meals wasted × 2
+            </p>
+
+            <p class="note">
+                Potential people fed is an estimate, not a count of actual
+                donations. This version treats all unsold meals as wasted.
+                Actual donations, stored food, and staff meals are not yet
+                recorded separately.
+            </p>
+        </section>
+
+        <section class="section-card" id="smartInsights">
+            <h2>Smart Insights</h2>
+            <p class="section-description">
+                Discover patterns in your restaurant's food waste
+                and find ways to reduce it.
+            </p>
+
+            <div id="insightsStatus" role="status" aria-live="polite">
+                Analysing your saved data...
+            </div>
+
+            <div class="metrics" id="insightsMetrics" hidden>
+                <article class="metric">
+                    <div class="metric-label">Recorded Days</div>
+                    <div class="metric-value" id="insightDays">—</div>
+                </article>
+
+                <article class="metric">
+                    <div class="metric-label">Average Waste / Day</div>
+                    <div class="metric-value" id="insightAverage">—</div>
+                </article>
+
+                <article class="metric">
+                    <div class="metric-label">Waste Trend</div>
+                    <div class="metric-value" id="insightTrend">—</div>
+                </article>
+                <article class="metric">
+                    <div class="metric-label">Waste Change</div>
+                    <div class="metric-value" id="insightPercentage">—</div>
+                </article>
+            </div>
+
+            <div id="insightsDetails" hidden>
+                <h3>Highest-Waste Day</h3>
+                <p id="insightHighestDay"></p>
+
+                <h3>Recommendations</h3>
+                <ul id="insightRecommendations"></ul>
+            </div>
+        </section>
+        <section class="section-card" id="wasteTrendSection">
+            <h2>Food-Waste Trend</h2>
+            <p class="section-description">
+                Track how your daily food waste changes over time.
+            </p>
+
+            <p id="wasteTrendStatus" role="status" aria-live="polite">
+                Loading waste data...
+            </p>
+
+            <div id="wasteTrendChart" style="width: 100%; min-height: 280px;">
+                <svg id="wasteTrendSvg" viewBox="0 0 700 280" role="img"
+                    aria-label="Line chart showing meals wasted by date"
+                    style="width: 100%; height: auto; display: none;">
+                </svg>
+            </div>
+        </section>
+
+
+        <section class="section-card" id="wasteGoalSection">
+            <div class="feature-heading">
+
+                <div>
+                    <h2>Waste-Reduction Goals</h2>
+                    <p class="section-description">
+                        Set a target and track your restaurant's progress.
+                    </p>
+                </div>
+            </div>
+
+            <form id="wasteGoalForm" class="goal-form">
+                <div class="goal-input-group">
+                    <label for="wasteGoalPercent">
+                        Target waste reduction (%)
+                    </label>
+                    <input type="number" id="wasteGoalPercent" min="1" max="90" value="20" required>
+                </div>
+
+                <button type="submit" class="primary-action">
+                    Save Goal
+                </button>
+            </form>
+
+            <div id="wasteGoalStatus" role="status" aria-live="polite">
+                Your goal has not been calculated yet.
+            </div>
+
+            <div id="wasteGoalProgress" hidden>
+                <div class="goal-metrics">
+                    <div class="goal-metric">
+                        <span>Baseline average</span>
+                        <strong id="wasteGoalBaseline">—</strong>
+                        <small>meals/day</small>
+                    </div>
+
+                    <div class="goal-metric">
+                        <span>Current average</span>
+                        <strong id="wasteGoalCurrent">—</strong>
+                        <small>meals/day</small>
+                    </div>
+
+                    <div class="goal-metric">
+                        <span>Target average</span>
+                        <strong id="wasteGoalTarget">—</strong>
+                        <small>meals/day</small>
+                    </div>
+                </div>
+
+                <div class="goal-progress-track" role="progressbar" id="wasteGoalBar"
+                    aria-label="Waste-reduction goal progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div id="wasteGoalBarFill" class="goal-progress-fill"></div>
+                </div>
+
+                <p id="wasteGoalProgressText"></p>
+            </div>
+        </section>
+
+        <section class="section-card" id="csvExportSection">
+            <div class="feature-heading">
+                <div>
+                    <h2>Export Your Data</h2>
+                    <p class="section-description">
+                        Take your food-waste records with you for reporting and analysis.
+                    </p>
+                </div>
+            </div>
+
+            <div class="export-content">
+                <div>
+                    <strong>WasteWise CSV Report</strong>
+                    <p class="section-description">
+                        Includes dates, meals prepared, meals sold, and meals wasted.
+                        Open the file in Excel or another spreadsheet application.
+                    </p>
+                </div>
+
+                <a class="primary-action export-button" href="/api/export/csv" download="wastewise_report.csv">
+                    <span aria-hidden="true">↓</span> Download CSV Report
+                </a>
+            </div>
+        </section>
+
+
+    </main>
+
+    <footer>
+        WasteWise · Smarter kitchens. Less waste. Greater impact.
+    </footer>
+
+    <script>
+        async function loadDashboard() {
+            const status =
+                document.getElementById("dashboardStatus");
+
+            try {
+                const response = await fetch("/api/entries");
+
+                if (!response.ok) {
+                    throw new Error(
+                        "The server could not load your entries."
+                    );
+                }
+
+                const entries = await response.json();
+
+                // The API should return a JSON array of daily entries.
+                if (!Array.isArray(entries)) {
+                    throw new Error(
+                        "Unexpected API response. Expected a list of entries."
+                    );
+                }
+
+                const totals = entries.reduce(
+                    (sum, entry) => {
+                        sum.prepared += Number(entry.meals_prepared) || 0;
+                        sum.sold += Number(entry.meals_sold) || 0;
+
+                        // Calculate these from inputs if the API does not
+                        // include the derived fields.
+                        const wasted =
+                            entry.meals_wasted !== undefined
+                                ? Number(entry.meals_wasted)
+                                : (Number(entry.meals_prepared) || 0) -
+                                (Number(entry.meals_sold) || 0);
+
+                        const people =
+                            entry.potential_people_fed !== undefined
+                                ? Number(entry.potential_people_fed)
+                                : wasted * 2;
+
+                        sum.wasted += wasted;
+                        sum.people += people;
+
+                        return sum;
+                    },
+                    {
+                        prepared: 0,
+                        sold: 0,
+                        wasted: 0,
+                        people: 0
+                    }
+                );
+
+                document.getElementById("totalWasted").textContent =
+                    totals.wasted.toLocaleString();
+
+                document.getElementById("totalPeople").textContent =
+                    totals.people.toLocaleString();
+
+                document.getElementById("totalPrepared").textContent =
+                    totals.prepared.toLocaleString();
+
+                document.getElementById("totalSold").textContent =
+                    totals.sold.toLocaleString();
+
+                status.textContent =
+                    `Successfully loaded ${entries.length} saved daily ` +
+                    (entries.length === 1 ? "entry." : "entries.");
+
+                status.classList.remove("error");
+
+            } catch (error) {
+                status.textContent =
+                    "Could not load your saved data. Check that Flask is " +
+                    "running and visit this dashboard through port 5000.";
+
+                status.classList.add("error");
+                console.error("WasteWise dashboard error:", error);
+            }
+        }
+
+        loadDashboard();
+
+        async function loadSmartInsights() {
+            const status = document.getElementById("insightsStatus");
+            const metrics = document.getElementById("insightsMetrics");
+            const details = document.getElementById("insightsDetails");
+
+            try {
+                const response = await fetch("/api/insights");
+
+                if (!response.ok) {
+                    throw new Error("Could not load smart insights.");
+                }
+
+                const data = await response.json();
+
+                if (data.total_recorded_days === 0) {
+                    status.textContent = data.message;
+                    return;
+                }
+
+                document.getElementById("insightDays").textContent =
+                    data.total_recorded_days.toLocaleString();
+
+                document.getElementById("insightAverage").textContent =
+                    data.average_waste_per_day.toLocaleString();
+
+                const trendLabels = {
+                    increasing: "Increasing ↑",
+                    decreasing: "Decreasing ↓",
+                    stable: "Stable →",
+                    insufficient_data: "Need more data"
+                };
+
+                document.getElementById("insightTrend").textContent =
+                    trendLabels[data.trend] || "Unavailable";
+                const percentageElement =
+                    document.getElementById("insightPercentage");
+
+                if (data.percentage_change === null ||
+                    data.percentage_change === undefined) {
+                    percentageElement.textContent = "Not available";
+                } else {
+                    const change = data.percentage_change;
+
+                    percentageElement.textContent =
+                        `${change > 0 ? "+" : ""}${change.toFixed(1)}%`;
+                }
+
+                const highest = data.highest_waste_day;
+
+                document.getElementById("insightHighestDay").textContent =
+                    highest
+                        ? `${highest.date}: ${highest.wasted} meals wasted`
+                        : "No highest-waste day available.";
+
+                const list = document.getElementById(
+                    "insightRecommendations"
+                );
+
+                list.replaceChildren();
+
+                data.recommendations.forEach((recommendation) => {
+                    const item = document.createElement("li");
+                    item.textContent = recommendation;
+                    list.appendChild(item);
+                });
+
+                metrics.hidden = false;
+                details.hidden = false;
+                status.textContent = "Insights updated from your saved entries.";
+
+            } catch (error) {
+                status.textContent =
+                    "Could not load insights. Check that Flask is running.";
+                console.error("WasteWise insights error:", error);
+            }
+        }
+
+        loadSmartInsights();
+
+        async function loadWasteTrend() {
+            const status = document.getElementById("wasteTrendStatus");
+            const svg = document.getElementById("wasteTrendSvg");
+            const namespace = "http://www.w3.org/2000/svg";
+
+            try {
+                const response = await fetch("/api/entries");
+
+                if (!response.ok) {
+                    throw new Error("Could not load entries.");
+                }
+
+                const entries = await response.json();
+
+                // Convert saved entries into date and waste values.
+                const points = entries.map(entry => ({
+                    date: entry.date,
+                    wasted: entry.wasted ??
+                        entry.meals_wasted ??
+                        ((entry.meals_prepared ?? entry.prepared) -
+                            (entry.meals_sold ?? entry.sold))
+                }))
+                    .filter(entry =>
+                        entry.date &&
+                        Number.isFinite(entry.wasted) &&
+                        entry.wasted >= 0
+                    )
+                    .sort((a, b) => a.date.localeCompare(b.date));
+
+                svg.replaceChildren();
+
+                if (points.length === 0) {
+                    svg.style.display = "none";
+                    status.textContent =
+                        "No saved waste entries yet. Add a daily entry to see your chart.";
+                    return;
+                }
+
+                const width = 700;
+                const height = 280;
+                const left = 60;
+                const right = 25;
+                const top = 25;
+                const bottom = 55;
+
+                const plotWidth = width - left - right;
+                const plotHeight = height - top - bottom;
+
+                const maxWaste = Math.max(
+                    1,
+                    ...points.map(point => point.wasted)
+                );
+
+                const x = index => points.length === 1
+                    ? left + plotWidth / 2
+                    : left + index * plotWidth / (points.length - 1);
+
+                const y = value =>
+                    top + plotHeight - (value / maxWaste) * plotHeight;
+
+                function addSvgElement(tag, attributes, textContent) {
+                    const element = document.createElementNS(namespace, tag);
+
+                    Object.entries(attributes).forEach(([key, value]) => {
+                        element.setAttribute(key, value);
+                    });
+
+                    if (textContent !== undefined) {
+                        element.textContent = textContent;
+                    }
+
+                    svg.appendChild(element);
+                    return element;
+                }
+
+                // Horizontal grid lines and value labels.
+                for (let i = 0; i <= 4; i++) {
+                    const value = maxWaste * i / 4;
+                    const yPosition = y(value);
+
+                    addSvgElement("line", {
+                        x1: left,
+                        y1: yPosition,
+                        x2: width - right,
+                        y2: yPosition,
+                        stroke: "currentColor",
+                        "stroke-opacity": "0.15"
+                    });
+
+                    addSvgElement("text", {
+                        x: left - 10,
+                        y: yPosition + 4,
+                        "text-anchor": "end",
+                        fill: "currentColor",
+                        "font-size": "12"
+                    }, String(Math.round(value)));
+                }
+
+                // Axes.
+                addSvgElement("line", {
+                    x1: left,
+                    y1: top,
+                    x2: left,
+                    y2: height - bottom,
+                    stroke: "currentColor",
+                    "stroke-opacity": "0.5"
+                });
+
+                addSvgElement("line", {
+                    x1: left,
+                    y1: height - bottom,
+                    x2: width - right,
+                    y2: height - bottom,
+                    stroke: "currentColor",
+                    "stroke-opacity": "0.5"
+                });
+
+                // Connect daily waste values.
+                const linePoints = points.map((point, index) =>
+                    `${x(index)},${y(point.wasted)}`
+                ).join(" ");
+
+                addSvgElement("polyline", {
+                    points: linePoints,
+                    fill: "none",
+                    stroke: "#16a34a",
+                    "stroke-width": "3",
+                    "stroke-linejoin": "round",
+                    "stroke-linecap": "round"
+                });
+
+                points.forEach((point, index) => {
+                    addSvgElement("circle", {
+                        cx: x(index),
+                        cy: y(point.wasted),
+                        r: "5",
+                        fill: "#16a34a"
+                    });
+
+                    // Keep date labels readable on larger datasets.
+                    const labelStep = Math.max(
+                        1,
+                        Math.ceil(points.length / 6)
+                    );
+
+                    if (
+                        index % labelStep === 0 ||
+                        index === points.length - 1
+                    ) {
+                        addSvgElement("text", {
+                            x: x(index),
+                            y: height - bottom + 22,
+                            "text-anchor": "middle",
+                            fill: "currentColor",
+                            "font-size": "11"
+                        }, point.date);
+                    }
+                });
+
+                svg.style.display = "block";
+                status.textContent =
+                    `Showing ${points.length} recorded day(s).`;
+
+            } catch (error) {
+                svg.style.display = "none";
+                status.textContent =
+                    "Could not load the chart. Check that Flask is running.";
+                console.error("WasteWise trend chart error:", error);
+            }
+        }
+
+        loadWasteTrend();
+
+
+        const wasteGoalForm = document.getElementById("wasteGoalForm");
+
+        async function loadSavedWasteGoal() {
+            const status = document.getElementById("wasteGoalStatus");
+            const percentInput = document.getElementById("wasteGoalPercent");
+
+            try {
+                const response = await fetch("/api/goals");
+
+                if (!response.ok) {
+                    throw new Error("Could not load the saved goal.");
+                }
+
+                const data = await response.json();
+
+                if (data.target_percent !== null &&
+                    data.target_percent !== undefined) {
+                    percentInput.value = data.target_percent;
+                    status.textContent =
+                        `Your saved target is ${data.target_percent}%.`;
+                } else {
+                    status.textContent =
+                        "Choose a target and click Save Goal.";
+                }
+            } catch (error) {
+                status.textContent =
+                    "Could not load your saved goal. Check that Flask is running.";
+                console.error(error);
+            }
+        }
+
+        async function calculateWasteGoalProgress(goalPercent) {
+            const status = document.getElementById("wasteGoalStatus");
+            const progress = document.getElementById("wasteGoalProgress");
+
+            try {
+                const response = await fetch("/api/entries");
+
+                if (!response.ok) {
+                    throw new Error("Could not load entries.");
+                }
+
+                const entries = await response.json();
+
+                const points = entries.map(entry => ({
+                    date: entry.date,
+                    wasted: Number(
+                        entry.wasted ??
+                        entry.meals_wasted ??
+                        ((entry.meals_prepared ?? entry.prepared) -
+                            (entry.meals_sold ?? entry.sold))
+                    )
+                }))
+                    .filter(entry =>
+                        entry.date &&
+                        Number.isFinite(entry.wasted) &&
+                        entry.wasted >= 0
+                    )
+                    .sort((a, b) => a.date.localeCompare(b.date));
+
+                if (points.length < 2) {
+                    progress.hidden = true;
+                    status.textContent =
+                        "Your goal is saved. Record at least two days of entries to calculate progress.";
+                    return;
+                }
+
+                const midpoint = Math.floor(points.length / 2);
+                const earlier = points.slice(0, midpoint);
+                const later = points.slice(midpoint);
+
+                const average = list =>
+                    list.reduce((sum, item) => sum + item.wasted, 0)
+                    / list.length;
+
+                const baseline = average(earlier);
+                const current = average(later);
+                const target = baseline * (1 - goalPercent / 100);
+
+                const actualReduction = baseline > 0
+                    ? ((baseline - current) / baseline) * 100
+                    : 0;
+
+                const progressPercent = baseline > 0
+                    ? Math.max(0, Math.min(
+                        100, actualReduction / goalPercent * 100
+                    ))
+                    : 0;
+
+                document.getElementById("wasteGoalBaseline").textContent =
+                    baseline.toFixed(1);
+
+                document.getElementById("wasteGoalCurrent").textContent =
+                    current.toFixed(1);
+
+                document.getElementById("wasteGoalTarget").textContent =
+                    target.toFixed(1);
+
+                const bar = document.getElementById("wasteGoalBar");
+                const fill = document.getElementById("wasteGoalBarFill");
+
+                fill.style.width = `${progressPercent}%`;
+                bar.setAttribute(
+                    "aria-valuenow",
+                    progressPercent.toFixed(0)
+                );
+
+                document.getElementById("wasteGoalProgressText").textContent =
+                    `${progressPercent.toFixed(0)}% of your reduction goal reached. ` +
+                    `Waste changed by ${actualReduction.toFixed(1)}% compared with the baseline.`;
+
+                progress.hidden = false;
+                status.textContent =
+                    `Your ${goalPercent}% waste-reduction goal is saved.`;
+
+            } catch (error) {
+                progress.hidden = true;
+                status.textContent =
+                    "Could not calculate progress. Check that Flask is running.";
+                console.error("WasteWise goal error:", error);
+            }
+        }
+
+        wasteGoalForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const status = document.getElementById("wasteGoalStatus");
+            const progress = document.getElementById("wasteGoalProgress");
+            const percentInput = document.getElementById("wasteGoalPercent");
+            const goalPercent = Number(percentInput.value);
+
+            if (!Number.isInteger(goalPercent) ||
+                goalPercent < 1 ||
+                goalPercent > 90) {
+                status.textContent =
+                    "Choose a whole-number target between 1% and 90%.";
+                progress.hidden = true;
+                return;
+            }
+
+            status.textContent = "Saving your goal...";
+            progress.hidden = true;
+
+            try {
+                const response = await fetch("/api/goals", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        target_percent: goalPercent
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Could not save your goal.");
+                }
+
+                await calculateWasteGoalProgress(goalPercent);
+
+            } catch (error) {
+                status.textContent =
+                    error.message || "Could not save your goal.";
+                console.error("WasteWise goal saving error:", error);
+            }
+        });
+
+        async function refreshWasteGoal() {
+            await loadSavedWasteGoal();
+
+            const goalPercent = Number(
+                document.getElementById("wasteGoalPercent").value
+            );
+
+            if (Number.isInteger(goalPercent) &&
+                goalPercent >= 1 &&
+                goalPercent <= 90) {
+                await calculateWasteGoalProgress(goalPercent);
+            }
+        }
+
+        refreshWasteGoal();
+
+
+    </script>
+</body>
+
+</html>

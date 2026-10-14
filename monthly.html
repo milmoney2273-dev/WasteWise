@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise | Monthly Analysis</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #f3f8f4;
+            color: #20382d;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        header {
+            background: #104d38;
+            color: white;
+            padding: 28px 5%;
+        }
+
+        header h1 { margin: 0; font-size: 2.4rem; }
+        header p { margin-bottom: 0; color: #e1f5e8; }
+
+        nav {
+            background: white;
+            padding: 15px 5%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #e0eae2;
+        }
+
+        nav a {
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #365a47;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        nav a.active, nav a:hover {
+            background: #e5f4e8;
+            color: #105a3d;
+        }
+
+        main {
+            max-width: 1450px;
+            padding: 35px 5%;
+            margin: auto;
+        }
+
+        .intro, .panel, .metric {
+            background: white;
+            border: 1px solid #e0eae2;
+            border-radius: 20px;
+        }
+
+        .intro {
+            background: linear-gradient(120deg, #e4f5e8, #fbfdfb);
+            padding: 35px;
+            margin-bottom: 25px;
+        }
+
+        .intro h2 { margin-top: 0; font-size: 2rem; }
+        .intro p { color: #61766a; line-height: 1.6; }
+
+        .toolbar {
+            display: flex;
+            align-items: end;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .toolbar label { display: block; font-weight: 700; margin-bottom: 8px; }
+
+        input, button {
+            font: inherit;
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+
+        input {
+            border: 1px solid #cbded0;
+            background: white;
+        }
+
+        button {
+            border: none;
+            background: #145a40;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button:hover { background: #0c422e; }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .metric { padding: 25px; }
+        .metric-label { color: #718077; font-weight: 600; }
+        .metric-value {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #124d37;
+            margin-top: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .panel { padding: 25px; margin-bottom: 25px; }
+        .panel h2 { margin-top: 0; }
+
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            height: 360px;
+        }
+
+        .status { color: #61766a; line-height: 1.6; }
+        .error { color: #b42318; }
+        .note { color: #718077; font-size: 0.9rem; line-height: 1.6; }
+
+        @media (max-width: 750px) {
+            .metrics { grid-template-columns: 1fr; }
+            .chart-wrap { height: 300px; }
+            .intro, .panel, .metric { padding: 20px; }
+            header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>WasteWise<span style="color:#71dba1">.</span></h1>
+        <p>Smarter kitchens. Less waste. Greater impact.</p>
+    </header>
+
+    <nav aria-label="Main navigation">
+        <a href="/">Dashboard</a>
+        <a href="/entry.html">Daily Entry</a>
+        <a href="/calendar.html">Calendar</a>
+        <a href="/monthly.html" class="active">Monthly Analysis</a>
+        <a href="/yearly.html">Yearly Analysis</a>
+    </nav>
+
+    <main>
+        <section class="intro">
+            <h2>Monthly Waste Analysis</h2>
+            <p>
+                Explore daily meal waste, identify difficult days,
+                and track your restaurant's progress.
+            </p>
+        </section>
+
+        <section class="toolbar">
+            <div>
+                <label for="monthPicker">Choose a month</label>
+                <input type="month" id="monthPicker">
+            </div>
+            <button id="loadButton" type="button">Load Analysis</button>
+        </section>
+
+        <section class="metrics">
+            <article class="metric">
+                <div class="metric-label">Total Meals Wasted</div>
+                <div class="metric-value" id="totalWasted">—</div>
+            </article>
+
+            <article class="metric">
+                <div class="metric-label">Potential People Fed</div>
+                <div class="metric-value" id="totalPeople">—</div>
+            </article>
+
+            <article class="metric">
+                <div class="metric-label">Average Waste per Recorded Day</div>
+                <div class="metric-value" id="averageWaste">—</div>
+            </article>
+        </section>
+
+        <section class="panel">
+            <h2>Daily Meals Wasted</h2>
+            <p class="note">
+                Each bar represents a date with a saved daily entry.
+                Dates without entries are not treated as zero-waste days.
+            </p>
+            <div class="chart-wrap">
+                <canvas id="wasteChart"
+                    aria-label="Bar chart of meals wasted per recorded day">
+                </canvas>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Monthly Summary</h2>
+            <p id="summary" class="status" role="status" aria-live="polite">
+                Choose a month to load your data.
+            </p>
+            <p id="status" class="status"></p>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const monthPicker = document.getElementById("monthPicker");
+        const loadButton = document.getElementById("loadButton");
+        const status = document.getElementById("status");
+        const summary = document.getElementById("summary");
+
+        let wasteChart = null;
+
+        // Select the current local month by default.
+        const now = new Date();
+        monthPicker.value =
+            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+        function formatNumber(value) {
+            return value.toLocaleString();
+        }
+
+        async function loadMonthlyAnalysis() {
+            const month = monthPicker.value;
+
+            if (!month) {
+                status.textContent = "Please select a month.";
+                status.classList.add("error");
+                return;
+            }
+
+            loadButton.disabled = true;
+            status.classList.remove("error");
+            status.textContent = "Loading monthly data...";
+            summary.textContent = "";
+
+            try {
+                const response = await fetch(
+                    `/api/entries?month=${encodeURIComponent(month)}`
+                );
+
+                const entries = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(entries.error || "Could not load entries.");
+                }
+
+                // The API returns newest dates first; reverse for chart order.
+                entries.sort((a, b) => a.date.localeCompare(b.date));
+
+                const totalWasted = entries.reduce(
+                    (sum, entry) => sum + entry.meals_wasted, 0
+                );
+
+                const totalPeople = entries.reduce(
+                    (sum, entry) => sum + entry.potential_people_fed, 0
+                );
+
+                const average = entries.length
+                    ? totalWasted / entries.length
+                    : 0;
+
+                document.getElementById("totalWasted").textContent =
+                    formatNumber(totalWasted);
+
+                document.getElementById("totalPeople").textContent =
+                    formatNumber(totalPeople);
+
+                document.getElementById("averageWaste").textContent =
+                    entries.length ? average.toFixed(1) : "—";
+
+                const labels = entries.map(entry => {
+                    const parts = entry.date.split("-");
+                    return `${Number(parts[2])}`;
+                });
+
+                const values = entries.map(entry => entry.meals_wasted);
+
+                if (wasteChart) {
+                    wasteChart.destroy();
+                }
+
+                wasteChart = new Chart(
+                    document.getElementById("wasteChart"),
+                    {
+                        type: "bar",
+                        data: {
+                            labels,
+                            datasets: [{
+                                label: "Meals wasted",
+                                data: values,
+                                backgroundColor: "#70c995",
+                                borderColor: "#145a40",
+                                borderWidth: 1,
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                intersect: false,
+                                mode: "index"
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        title: items => {
+                                            const entry = entries[items[0].dataIndex];
+                                            return entry.date;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: "Meals wasted"
+                                    },
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: "Recorded day of month"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+
+                if (entries.length === 0) {
+                    summary.textContent =
+                        "No saved entries exist for this month yet. Add a daily entry to begin your analysis.";
+                } else {
+                    const highest = entries.reduce((a, b) =>
+                        b.meals_wasted > a.meals_wasted ? b : a
+                    );
+
+                    summary.textContent =
+                        `${entries.length} recorded day(s). ` +
+                        `Total waste: ${formatNumber(totalWasted)} meals. ` +
+                        `Average: ${average.toFixed(1)} meals per recorded day. ` +
+                        `Highest recorded waste: ${highest.meals_wasted} meals on ${highest.date}.`;
+                }
+
+                status.textContent =
+                    `Loaded ${entries.length} saved entry/entries for ${month}.`;
+
+            } catch (error) {
+                status.textContent =
+                    "Could not load the monthly analysis. Check your Flask server and internet connection.";
+                status.classList.add("error");
+                summary.textContent = error.message;
+                console.error(error);
+            } finally {
+                loadButton.disabled = false;
+            }
+        }
+
+        loadButton.addEventListener("click", loadMonthlyAnalysis);
+        monthPicker.addEventListener("change", loadMonthlyAnalysis);
+
+        loadMonthlyAnalysis();
+    </script>
+</body>
+</html>

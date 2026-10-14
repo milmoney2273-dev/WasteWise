@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise | Calendar</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f2f7f3;
+            color: #183d30;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .page {
+            width: min(1200px, 94%);
+            margin: 0 auto;
+            padding: 28px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: 800;
+            color: #185b40;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        nav a {
+            color: #286248;
+            text-decoration: none;
+            padding: 10px 13px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: #dcefe2;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #dce9df;
+            border-radius: 22px;
+            padding: 26px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 30px rgba(30, 70, 45, 0.04);
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        .muted {
+            color: #6b7f74;
+            line-height: 1.6;
+        }
+
+        .calendar-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .month-controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        button, select, input {
+            font: inherit;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 11px 15px;
+            background: #238052;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            filter: brightness(0.95);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        button.secondary {
+            background: #e8f1eb;
+            color: #24563c;
+        }
+
+        button.danger {
+            background: #68766e;
+            margin-left: 8px;
+        }
+
+        .weekdays,
+        #calendarGrid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .weekday {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 13px;
+            color: #708277;
+            font-weight: 700;
+        }
+
+        .day {
+            min-height: 100px;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 9px;
+            background: #fff;
+            border: 1px solid #dce8df;
+            color: #234635;
+            border-radius: 12px;
+            min-width: 0;
+        }
+
+        .day.empty {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .day.recorded {
+            background: #e0f5e7;
+            border-color: #85c99d;
+        }
+
+        .day.missing {
+            background: #fff0d8;
+            border-color: #e9bf73;
+        }
+
+        .day.closed {
+            background: #e3e7eb;
+            border-color: #aab4bf;
+        }
+
+        .day.holiday {
+            background: #eee5ff;
+            border-color: #b9a0eb;
+        }
+
+        .day.selected {
+            outline: 3px solid #258052;
+            outline-offset: 1px;
+        }
+
+        .day-number {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .day-status {
+            font-size: 11px;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 22px;
+            color: #61756a;
+            font-size: 13px;
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+        .green-dot { background: #85c99d; }
+        .orange-dot { background: #e9bf73; }
+        .grey-dot { background: #aab4bf; }
+        .purple-dot { background: #b9a0eb; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            padding: 18px;
+            border-radius: 14px;
+            background: #f3f8f4;
+            border: 1px solid #e0ebe2;
+        }
+
+        .stat p {
+            color: #718176;
+            margin: 0 0 10px;
+            font-size: 14px;
+        }
+
+        .stat h3 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .field {
+            margin: 16px 0;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            max-width: 460px;
+            padding: 12px;
+            border: 1px solid #cbdacf;
+            border-radius: 10px;
+            background: white;
+            color: #183d30;
+        }
+
+        #status {
+            margin: 18px 0 0;
+            color: #286248;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                width: 96%;
+                padding-top: 16px;
+            }
+
+            .panel {
+                padding: 15px;
+                border-radius: 16px;
+            }
+
+            .weekdays,
+            #calendarGrid {
+                gap: 4px;
+            }
+
+            .day {
+                min-height: 76px;
+                padding: 7px 2px;
+                border-radius: 8px;
+                gap: 7px;
+            }
+
+            .day-number {
+                font-size: 14px;
+            }
+
+            .day-status {
+                font-size: 9px;
+            }
+
+            .weekday {
+                font-size: 11px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .stat h3 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+
+    <header class="topbar">
+        <div class="brand">WasteWise</div>
+
+        <nav>
+            <a href="/">Dashboard</a>
+            <a href="/entry.html">Daily Entry</a>
+            <a href="/calendar.html" class="active">Calendar</a>
+            <a href="/monthly.html">Monthly</a>
+            <a href="/yearly.html">Yearly</a>
+        </nav>
+    </header>
+
+    <section class="panel">
+        <h1>WasteWise Calendar</h1>
+        <p class="muted">
+            Track recorded meal data, identify missing entries, and mark
+            restaurant closures and holidays.
+        </p>
+
+        <div class="calendar-heading">
+            <h2 id="monthLabel">Loading month...</h2>
+
+            <div class="month-controls">
+                <button id="previousMonth" class="secondary" type="button">
+                    ← Previous
+                </button>
+                <button id="todayButton" class="secondary" type="button">
+                    Today
+                </button>
+                <button id="nextMonth" class="secondary" type="button">
+                    Next →
+                </button>
+            </div>
+        </div>
+
+        <div class="weekdays" aria-hidden="true">
+            <div class="weekday">Sun</div>
+            <div class="weekday">Mon</div>
+            <div class="weekday">Tue</div>
+            <div class="weekday">Wed</div>
+            <div class="weekday">Thu</div>
+            <div class="weekday">Fri</div>
+            <div class="weekday">Sat</div>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+
+        <div class="legend">
+            <span><i class="legend-dot green-dot"></i> Recorded</span>
+            <span><i class="legend-dot orange-dot"></i> Past date with no entry</span>
+            <span><i class="legend-dot grey-dot"></i> Closed</span>
+            <span><i class="legend-dot purple-dot"></i> Holiday</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2 id="detailTitle">Select a date</h2>
+
+        <p id="detailMessage" class="muted">
+            Click a date on the calendar to see its details.
+        </p>
+
+        <div id="detailStats" class="stats" hidden>
+            <div class="stat">
+                <p>Meals prepared</p>
+                <h3 id="preparedValue">0</h3>
+            </div>
+            <div class="stat">
+                <p>Meals sold</p>
+                <h3 id="soldValue">0</h3>
+            </div>
+            <div class="stat">
+                <p>Meals wasted</p>
+                <h3 id="wastedValue">0</h3>
+            </div>
+        </div>
+
+        <button id="addEntryButton" type="button" hidden>
+            Add or update meal entry
+        </button>
+
+        <div id="dayStatusControls" hidden>
+            <h3 style="margin-top: 25px;">Day Status</h3>
+
+            <div class="field">
+                <label for="dayStatusSelect">Mark this day as</label>
+                <select id="dayStatusSelect">
+                    <option value="">No special status</option>
+                    <option value="closed">Restaurant Closed</option>
+                    <option value="holiday">Holiday</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="dayStatusNote">Note (optional)</label>
+                <input
+                    id="dayStatusNote"
+                    type="text"
+                    maxlength="200"
+                    placeholder="e.g. Public holiday or weekly closure"
+                >
+            </div>
+
+            <button id="saveDayStatusButton" type="button">
+                Save Day Status
+            </button>
+
+            <button id="removeDayStatusButton"
+                    class="danger"
+                    type="button">
+                Remove Status
+            </button>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">
+            Loading saved entries...
+        </p>
+    </section>
+
+</div>
+
+<script>
+"use strict";
+
+const grid = document.getElementById("calendarGrid");
+const monthLabel = document.getElementById("monthLabel");
+const statusMessage = document.getElementById("status");
+
+const detailTitle = document.getElementById("detailTitle");
+const detailMessage = document.getElementById("detailMessage");
+const detailStats = document.getElementById("detailStats");
+const addEntryButton = document.getElementById("addEntryButton");
+
+const dayStatusControls = document.getElementById("dayStatusControls");
+const dayStatusSelect = document.getElementById("dayStatusSelect");
+const dayStatusNote = document.getElementById("dayStatusNote");
+const saveDayStatusButton = document.getElementById("saveDayStatusButton");
+const removeDayStatusButton = document.getElementById("removeDayStatusButton");
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+let displayedYear = today.getFullYear();
+let displayedMonth = today.getMonth();
+let selectedDate = null;
+let entriesByDate = {};
+let statusesByDate = {};
+
+function makeDateString(year, month, day) {
+    return year + "-"
+        + String(month + 1).padStart(2, "0") + "-"
+        + String(day).padStart(2, "0");
+}
+
+function formatNumber(value) {
+    return Number(value).toLocaleString();
+}
+
+function clearDateDetails() {
+    detailTitle.textContent = "Select a date";
+    detailMessage.textContent = "Click a date to see its details.";
+    detailStats.hidden = true;
+    addEntryButton.hidden = true;
+    dayStatusControls.hidden = true;
+}
+
+function renderCalendar() {
+    grid.replaceChildren();
+
+    monthLabel.textContent = new Date(
+        displayedYear, displayedMonth, 1
+    ).toLocaleDateString("en", {
+        month: "long",
+        year: "numeric"
+    });
+
+    const firstWeekday = new Date(
+        displayedYear, displayedMonth, 1
+    ).getDay();
+
+    const daysInMonth = new Date(
+        displayedYear, displayedMonth + 1, 0
+    ).getDate();
+
+    for (let i = 0; i < firstWeekday; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "day empty";
+        emptyCell.setAttribute("aria-hidden", "true");
+        grid.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateString = makeDateString(
+            displayedYear, displayedMonth, day
+        );
+
+        const entry = entriesByDate[dateString];
+        const dayStatus = statusesByDate[dateString];
+        const cellDate = new Date(
+            displayedYear, displayedMonth, day
+        );
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "day";
+        button.setAttribute("aria-label", dateString);
+
+        if (entry) {
+            button.classList.add("recorded");
+        } else if (dayStatus) {
+            button.classList.add(dayStatus.status);
+        } else if (cellDate < today) {
+            button.classList.add("missing");
+        }
+
+        if (dateString === selectedDate) {
+            button.classList.add("selected");
+            button.setAttribute("aria-pressed", "true");
+        } else {
+            button.setAttribute("aria-pressed", "false");
+        }
+
+        const number = document.createElement("span");
+        number.className = "day-number";
+        number.textContent = day;
+        button.appendChild(number);
+
+        const label = document.createElement("span");
+        label.className = "day-status";
+
+        if (entry) {
+            label.textContent = formatNumber(entry.meals_wasted)
+                + " wasted";
+        } else if (dayStatus) {
+            label.textContent = dayStatus.status === "closed"
+                ? "Closed"
+                : "Holiday";
+        } else if (cellDate < today) {
+            label.textContent = "No entry";
+        } else {
+            label.textContent = "—";
+        }
+
+        button.appendChild(label);
+
+        button.addEventListener("click", () => {
+            selectedDate = dateString;
+            renderCalendar();
+            showDateDetails(dateString);
+        });
+
+        grid.appendChild(button);
+    }
+}
+
+function showDateDetails(dateString) {
+    const entry = entriesByDate[dateString];
+    const dayStatus = statusesByDate[dateString];
+
+    detailTitle.textContent = new Date(
+        dateString + "T12:00:00"
+    ).toLocaleDateString("en", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+
+    if (entry) {
+        detailMessage.textContent = "Saved meal entry found for this date.";
+
+        document.getElementById("preparedValue").textContent =
+            formatNumber(entry.meals_prepared);
+        document.getElementById("soldValue").textContent =
+            formatNumber(entry.meals_sold);
+        document.getElementById("wastedValue").textContent =
+            formatNumber(entry.meals_wasted);
+
+        detailStats.hidden = false;
+        addEntryButton.hidden = false;
+        dayStatusControls.hidden = true;
+    } else {
+        detailStats.hidden = true;
+        addEntryButton.hidden = false;
+        dayStatusControls.hidden = false;
+
+        if (dayStatus) {
+            detailMessage.textContent =
+                "Status: " + dayStatus.status
+                + (dayStatus.note ? " — " + dayStatus.note : "");
+
+            dayStatusSelect.value = dayStatus.status;
+            dayStatusNote.value = dayStatus.note || "";
+        } else {
+            detailMessage.textContent =
+                "No meal entry is saved for this date. You can add a meal entry or mark it as closed or a holiday.";
+
+            dayStatusSelect.value = "";
+            dayStatusNote.value = "";
+        }
+    }
+
+    addEntryButton.onclick = () => {
+        window.location.href =
+            "/entry.html?date=" + encodeURIComponent(dateString);
+    };
+}
+
+async function loadEntries() {
+    statusMessage.textContent = "Loading saved entries...";
+
+    try {
+        const month = displayedYear + "-"
+            + String(displayedMonth + 1).padStart(2, "0");
+
+        const [entriesResponse, statusesResponse] = await Promise.all([
+            fetch("/api/entries?month=" + month),
+            fetch("/api/day-statuses?month=" + month)
+        ]);
+
+        if (!entriesResponse.ok) {
+            throw new Error("Could not load meal entries.");
+        }
+
+        if (!statusesResponse.ok) {
+            throw new Error("Could not load day statuses.");
+        }
+
+        const entries = await entriesResponse.json();
+        const statuses = await statusesResponse.json();
+
+        entriesByDate = {};
+        statusesByDate = {};
+
+        for (const entry of entries) {
+            entriesByDate[entry.date] = entry;
+        }
+
+        for (const item of statuses) {
+            statusesByDate[item.date] = item;
+        }
+
+        renderCalendar();
+
+        if (selectedDate) {
+            showDateDetails(selectedDate);
+        }
+
+        statusMessage.textContent =
+            "Loaded " + entries.length + " meal entries and "
+            + statuses.length + " day statuses.";
+    } catch (error) {
+        console.error(error);
+        statusMessage.textContent =
+            error.message + " Make sure Flask is running and your database is initialized.";
+    }
+}
+
+saveDayStatusButton.addEventListener("click", async () => {
+    if (!selectedDate) {
+        statusMessage.textContent = "Select a date first.";
+        return;
+    }
+
+    const selectedStatus = dayStatusSelect.value;
+    const note = dayStatusNote.value.trim();
+
+    if (!selectedStatus) {
+        statusMessage.textContent =
+            "Choose Closed or Holiday before saving.";
+        return;
+    }
+
+    if (entriesByDate[selectedDate]) {
+        statusMessage.textContent =
+            "This date already has a meal entry.";
+        return;
+    }
+
+    saveDayStatusButton.disabled = true;
+
+    try {
+        const response = await fetch("/api/day-statuses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                date: selectedDate,
+                status: selectedStatus,
+                note: note
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not save status.");
+        }
+
+        statusMessage.textContent = "Day status saved successfully.";
+        await loadEntries();
+    } catch (error) {
+        statusMessage.textContent = error.message;
+    } finally {
+        saveDayStatusButton.disabled = false;
+    }
+});
+
+removeDayStatusButton.addEventListener("click", async () => {
+    if (!selectedDate) {
+        statusMessage.textContent = "Select a date first.";
+        return;
+    }
+
+    if (!statusesByDate[selectedDate]) {
+        statusMessage.textContent =
+            "There is no saved status to remove for this date.";
+        return;
+    }
+
+    removeDayStatusButton.disabled = true;
+
+    try {
+        const response = await fetch(
+            "/api/day-statuses/" + encodeURIComponent(selectedDate),
+            { method: "DELETE" }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not remove status.");
+        }
+
+        statusMessage.textContent = "Day status removed.";
+        await loadEntries();
+    } catch (error) {
+        statusMessage.textContent = error.message;
+    } finally {
+        removeDayStatusButton.disabled = false;
+    }
+});
+
+function changeMonth(amount) {
+    displayedMonth += amount;
+
+    if (displayedMonth < 0) {
+        displayedMonth = 11;
+        displayedYear--;
+    } else if (displayedMonth > 11) {
+        displayedMonth = 0;
+        displayedYear++;
+    }
+
+    selectedDate = null;
+    clearDateDetails();
+    loadEntries();
+}
+
+document.getElementById("previousMonth").addEventListener("click", () => {
+    changeMonth(-1);
+});
+
+document.getElementById("nextMonth").addEventListener("click", () => {
+    changeMonth(1);
+});
+
+document.getElementById("todayButton").addEventListener("click", () => {
+    displayedYear = today.getFullYear();
+    displayedMonth = today.getMonth();
+    selectedDate = null;
+    clearDateDetails();
+    loadEntries();
+});
+
+loadEntries();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Entry | WasteWise</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .entry-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d9e5dc;
+            border-radius: 9px;
+            background: #fbfdfb;
+            font: inherit;
+        }
+
+        .field input:focus {
+            outline: 2px solid #42a875;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 22px;
+            background: #eaf6ed;
+            border-radius: 14px;
+        }
+
+        .result-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: #17643c;
+        }
+
+        .message {
+            margin-top: 14px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .entry-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <h1>WasteWise</h1>
+        <p>Smarter kitchens. Less waste. Greater impact.</p>
+    </header>
+
+    <nav class="navigation">
+        <a href="index.html">Dashboard</a>
+        <a href="entry.html">Daily Entry</a>
+        <a href="calendar.html">Calendar</a>
+        <a href="monthly.html">Monthly Analysis</a>
+        <a href="yearly.html">Yearly Analysis</a>
+    </nav>
+
+    <main class="container">
+        <section class="welcome">
+            <h2>Daily Restaurant Entry</h2>
+            <p>Enter your restaurant's daily meal figures.
+                WasteWise calculates the rest.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Record Today's Operations</h2>
+
+            <form id="entryForm">
+                <div class="entry-form">
+                    <div class="field">
+                        <label for="date">Operating date</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="made">Meals prepared</label>
+                        <input type="number" id="made" min="0" step="1" placeholder="e.g. 500" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="sold">Meals sold</label>
+                        <input type="number" id="sold" min="0" step="1" placeholder="e.g. 450" required>
+                    </div>
+                </div>
+
+                <div class="result" aria-live="polite">
+                    <h2>Automatic Waste Calculation</h2>
+                    <p>Meals wasted</p>
+                    <div class="result-number" id="wastedResult">—</div>
+
+                    <p>Potential people fed</p>
+                    <div class="result-number" id="peopleResult">—</div>
+
+                    <p id="explanation">
+                        Enter meals prepared and sold to calculate your impact.
+                    </p>
+                </div>
+
+                <button class="button" type="submit">
+                    Complete Daily Entry
+                </button>
+
+                <p id="message" class="message" role="status"></p>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        WasteWise | Food Waste Analytics Platform
+    </footer>
+
+    <script>
+        const form = document.getElementById("entryForm");
+        const madeInput = document.getElementById("made");
+        const soldInput = document.getElementById("sold");
+
+        const wastedResult = document.getElementById("wastedResult");
+        const peopleResult = document.getElementById("peopleResult");
+        const explanation = document.getElementById("explanation");
+        const message = document.getElementById("message");
+
+        const dateInput = document.getElementById("date");
+
+        const now = new Date();
+        dateInput.value = new Date(
+            now.getTime() - now.getTimezoneOffset() * 60000
+        ).toISOString().slice(0, 10);
+
+        function calculateWaste() {
+            const madeText = madeInput.value;
+            const soldText = soldInput.value;
+
+            if (madeText === "" || soldText === "") {
+                wastedResult.textContent = "—";
+                peopleResult.textContent = "—";
+                explanation.textContent =
+                    "Enter both meal figures to calculate your impact.";
+                return null;
+            }
+
+            const made = Number(madeText);
+            const sold = Number(soldText);
+
+            if (
+                !Number.isSafeInteger(made) ||
+                !Number.isSafeInteger(sold) ||
+                made < 0 ||
+                sold < 0 ||
+                sold > made
+            ) {
+                wastedResult.textContent = "—";
+                peopleResult.textContent = "—";
+                explanation.textContent =
+                    "Please enter valid counts. Meals sold cannot exceed meals prepared.";
+                return null;
+            }
+
+            const wasted = made - sold;
+            const people = wasted * 2;
+
+            wastedResult.textContent = wasted.toLocaleString();
+            peopleResult.textContent = people.toLocaleString();
+
+            explanation.textContent =
+                `${wasted} wasted meals × 2 = ${people} potential people fed.`;
+
+            return { made, sold, wasted, people };
+        }
+
+        madeInput.addEventListener("input", calculateWaste);
+        soldInput.addEventListener("input", calculateWaste);
+
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const calculations = calculateWaste();
+
+            if (!dateInput.value || !calculations) {
+                message.textContent =
+                    "Please correct the date and meal figures.";
+                return;
+            }
+
+            const made = Number(
+                document.getElementById("made").value
+            );
+
+            const sold = Number(
+                document.getElementById("sold").value
+            );
+
+            try {
+                message.textContent = "Saving entry...";
+
+                const response = await fetch("/api/entries", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        date: dateInput.value,
+                        meals_prepared: made,
+                        meals_sold: sold
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.error || "Unable to save entry."
+                    );
+                }
+
+                message.textContent =
+                    "Saved successfully! " +
+                    result.entry.meals_wasted +
+                    " meals wasted; " +
+                    result.entry.potential_people_fed +
+                    " potential people fed.";
+
+            } catch (error) {
+                message.textContent =
+                    "Could not save entry. " + error.message;
+            }
+        });
+    </script>
+</body>
+
+</html>

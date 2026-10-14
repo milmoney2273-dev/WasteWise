@@ -1,0 +1,570 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --green-950: #082f24;
+    --green-900: #104633;
+    --green-700: #218052;
+    --green-500: #42a875;
+    --green-100: #e5f5e9;
+    --bg: #f5f8f5;
+    --text: #1d3328;
+    --muted: #718078;
+    --border: #e3ebe4;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "DM Sans", Arial, sans-serif;
+    background:
+        radial-gradient(ellipse at top left, #e8f5e9 0, transparent 38%),
+        var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.topbar {
+    padding: 25px 6%;
+    color: white;
+    background: linear-gradient(115deg, #082f24, #14573b);
+    position: relative;
+    overflow: hidden;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.topbar h1::after {
+    content: ".";
+    color: #6cdda0;
+}
+
+.topbar p {
+    margin: 4px 0 0;
+    color: #d0e7d8;
+    font-size: 14px;
+}
+
+.navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding: 14px 6%;
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 15px #183a2405;
+}
+
+.navigation a {
+    padding: 10px 14px;
+    border-radius: 9px;
+    text-decoration: none;
+    color: #4e6255;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background 0.2s, color 0.2s;
+}
+
+.navigation a:hover,
+.navigation a:first-child {
+    color: #14613b;
+    background: #e7f5e9;
+}
+
+.container {
+    width: min(1200px, 90%);
+    margin: 42px auto;
+}
+
+.welcome {
+    position: relative;
+    padding: 32px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    border: 1px solid #d9eadc;
+    border-radius: 22px;
+    background: linear-gradient(120deg, #e5f5e8, #f9fcf8 75%);
+}
+
+.welcome::after {
+    content: "✳";
+    position: absolute;
+    right: 35px;
+    top: -45px;
+    color: #c9e9d0;
+    font-size: 190px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.welcome h2 {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 8px;
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(25px, 4vw, 38px);
+    letter-spacing: -1px;
+}
+
+.welcome p {
+    position: relative;
+    z-index: 1;
+    max-width: 550px;
+    margin: 0;
+    color: #607569;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.card {
+    min-width: 0;
+    padding: 23px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    box-shadow: 0 5px 20px #143c2108;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 26px #143c2112;
+}
+
+.card h3 {
+    margin: 0 0 13px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.card p {
+    margin: 0;
+    color: var(--green-900);
+    font-family: "Manrope", sans-serif;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.panel {
+    padding: 28px;
+    margin-top: 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 5px 20px #143c2108;
+}
+
+.panel h2 {
+    margin-top: 0;
+    font-family: "Manrope", sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.panel p {
+    color: var(--muted);
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 20px;
+    margin-top: 10px;
+    color: white;
+    background: linear-gradient(120deg, #17643c, #238451);
+    border: 0;
+    border-radius: 11px;
+    box-shadow: 0 5px 12px #17643c20;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px #17643c30;
+}
+
+footer {
+    padding: 25px;
+    text-align: center;
+    color: #d2e7d9;
+    background: var(--green-950);
+    font-size: 13px;
+}
+
+@media (max-width: 900px) {
+    .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .container {
+        margin: 28px auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .topbar {
+        padding: 22px 5%;
+    }
+
+    .navigation {
+        padding: 10px 4%;
+        gap: 3px;
+    }
+
+    .navigation a {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .container {
+        width: 92%;
+        margin: 22px auto;
+    }
+
+    .welcome {
+        padding: 23px;
+    }
+
+    .welcome::after {
+        right: -40px;
+        font-size: 140px;
+    }
+
+    .metrics {
+        gap: 10px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .card p {
+        font-size: 25px;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+}
+
+/* Smart Insights layout improvements */
+#insightsMetrics {
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(150px, 1fr)
+    );
+}
+
+#insightsMetrics .metric-value {
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+@media (max-width: 600px) {
+    #insightsMetrics {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ----------------------------------
+   WasteWise dashboard polish
+---------------------------------- */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    line-height: 1.6;
+    letter-spacing: 0.1px;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.25;
+    letter-spacing: -0.4px;
+}
+
+section {
+    transition:
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Improve the spacing of dashboard cards */
+.card,
+.stat-card,
+.insight-card {
+    box-sizing: border-box;
+}
+
+/* Make buttons consistent */
+button,
+.button,
+a.button {
+    cursor: pointer;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+}
+
+button:hover,
+.button:hover,
+a.button:hover {
+    transform: translateY(-2px);
+}
+
+/* Make keyboard navigation easier to see */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid #70dca7;
+    outline-offset: 3px;
+}
+
+/* Improve form controls */
+input,
+select {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="number"] {
+    padding: 10px 12px;
+    border: 1px solid #cbded2;
+    border-radius: 10px;
+}
+
+/* Keep the dashboard usable on smaller screens */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    main {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    nav {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    button,
+    .button,
+    a.button {
+        max-width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* WasteWise goal and export sections */
+
+
+.feature-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 24px;
+}
+
+
+.feature-heading h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.feature-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #e5f5eb;
+    font-size: 23px;
+}
+
+.goal-form {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.goal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.goal-input-group label {
+    font-weight: 600;
+}
+
+.goal-input-group input {
+    width: 150px;
+    min-height: 44px;
+    font: inherit;
+}
+
+.primary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 12px;
+    background: #145b43;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.primary-action:hover {
+    background: #0e4935;
+    color: #ffffff;
+}
+
+.goal-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.goal-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 20px;
+    border: 1px solid #dcebe1;
+    border-radius: 16px;
+    background: #f7fbf8;
+}
+
+.goal-metric span,
+.goal-metric small {
+    color: #587366;
+}
+
+.goal-metric strong {
+    color: #145b43;
+    font-size: 1.7rem;
+}
+
+.goal-progress-track {
+    height: 12px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e5e7eb;
+}
+
+.goal-progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: #16a34a;
+    transition: width 0.3s ease;
+}
+
+.export-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 22px;
+    border: 1px solid #dcebe1;
+    border-radius: 16px;
+    background: #f7fbf8;
+}
+
+.export-content > div {
+    flex: 1;
+    min-width: 220px;
+}
+
+.export-content p {
+    margin-bottom: 0;
+}
+
+.export-button {
+    flex-shrink: 0;
+}
+
+@media (max-width: 650px) {
+    .goal-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .goal-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .goal-input-group input {
+        width: 100%;
+    }
+
+    .goal-form button,
+    .export-button {
+        width: 100%;
+    }
+
+    .export-content {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .goal-progress-fill {
+        transition: none;
+    }
+}
